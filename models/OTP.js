@@ -36,9 +36,11 @@ async function sendVerificationEmail(email, otp) {
 }
 
 OTPSchema.pre("save", async function(next) {
-    await sendVerificationEmail(this.email, this.otp);
+    await sendVerificationEmail(this.email, this.otp);  
     next();
 })
+
+// It's a listener that says: "Hey Mongoose, whenever someone tries to save an OTP, run this code FIRST (before the actual save)."
 
 module.exports = mongoose.model("OTP" , OTPSchema);
 

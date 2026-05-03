@@ -13,6 +13,7 @@
   "dependencies": {
     "express": "^5.2.1",
     "mongoose": "^9.6.1",
-    "nodemailer": "^8.0.7"
+    "nodemailer": "^8.0.7",
+    "otp-generator": "^4.0.1"
   }
 }
