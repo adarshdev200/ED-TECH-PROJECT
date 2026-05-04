@@ -4,6 +4,7 @@ const otpgen = require("otp-generator");
 const { raw } = require("express");
 const OTP = require("../models/OTP");
 const profile = require("../models/profile");
+const mailSender = require("../utils/nodemailer");
 
 //Send OTP MODEL
 
