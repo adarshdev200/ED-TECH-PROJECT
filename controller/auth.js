@@ -194,6 +194,85 @@ exports.signUp = async (req,res) => {
 
 
 
+// login flow model 
 
 
+exports.login = async (req,res) => {
+
+    try{
+
+        //Fecth details
+
+        const{email , password} = req.body;
+         
+        // password matching
+
+        if(!email || !password) {
+            res.status(403).json({
+                success : false,
+                message : "All fields Required"
+            })
+        };
+
+        const user_exist =  await user.findOne({email}).populate("additionaldetails");
+
+        if(!user_exist) {
+            res.status(403).json({
+                success : false,
+                message : "User cannot be found"
+            })
+        };
+
+        if(await bcrypt.compare(password , user.password)) {
+
+            const payload = {
+                email = user.email,
+                id : user._id,
+                role : user.role,
+
+            }
+
+            const token = jwt.sign(payload , process.env.JWT_SECRET, {
+                expiresIn : "2h",
+            });
+
+            user_exist = user_exist.toObject();
+            user_exist.token = token;
+            user_exist.password = undefined; 
+
+
+            // create cookie and send ..
+
+            const options ={
+                expires : new Date(Date.now() + 3 *24 *60*60*1000),
+                httpOnly : true,
+            }
+
+            res.cookie("token" , token , options).status(200).json({
+                success : true,
+                token,
+                user_exist,
+                message : "Logged IN successfully."
+            })
+        } 
+
+        else {
+            return res.status(401).json({
+                success : false,
+                message : "Passwords do not match.",
+            })
+        }
+
+
+
+    }
+
+    catch(err){
+        console.error(err);
+        res.status(500).json({
+                success : false,
+                message : "User cannot be registered..",
+
+    })}
+}
 
