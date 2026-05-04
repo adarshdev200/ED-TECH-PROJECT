@@ -2,10 +2,9 @@ const mongoose = require("mongoose");
 
 exports.OTPSchema = new mongoose.Schema({
 
-    email : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : "user",
-        required : true,
+    email:{
+        type:String,
+        required: true,
     },
 
     otp : {
