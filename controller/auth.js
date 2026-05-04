@@ -200,9 +200,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user_exist = await user
-      .findOne({ email })
-      .populate("additionaldetails");
+    const user_exist = await user.findOne({ email }).populate("additionaldetails");
 
     if (!user_exist) {
       res.status(403).json({
@@ -211,11 +209,11 @@ exports.login = async (req, res) => {
       });
     }
 
-    if (await bcrypt.compare(password, user.password)) {
+    if (await bcrypt.compare(password, user_exist.password)) {
       const payload = {
-        email: user.email,
-        id: user._id,
-        role: user.role,
+        email: user_exist.email,
+        id: user_exist._id,
+        acctype: user_exist.acctype,
       };
 
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
