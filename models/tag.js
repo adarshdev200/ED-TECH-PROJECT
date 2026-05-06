@@ -10,10 +10,10 @@ exports.tagsSchema = new mongoose.Schema({
         type : String,
     },
 
-    completedVideos : [
+    course : [
         {
             type : mongoose.Schema.Types.ObjectId,
-            ref : "Subsection",
+            ref : "course",
         }
     ],
 });

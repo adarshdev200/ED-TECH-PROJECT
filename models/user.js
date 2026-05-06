@@ -42,6 +42,15 @@ exports.userSchema = new mongoose.Schema({
         required : true,
     },
 
+    token : {
+        type : String,
+    },
+
+    resetPasswordExpires : {
+        type : Date,
+
+    },
+
     courses : [
         {
             type : mongoose.Schema.Types.ObjectId,

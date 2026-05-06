@@ -213,7 +213,7 @@ exports.login = async (req, res) => {
       const payload = {
         email: user_exist.email,
         id: user_exist._id,
-        acctype: user_exist.acctype,
+        role : user_exist.acctype,
       };
 
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
