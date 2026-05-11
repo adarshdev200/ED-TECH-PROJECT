@@ -44,10 +44,20 @@ exports.CourseSchema = new mongoose.Schema({
         type : String,
     },
 
-    Tags : {
+    category : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : "tag",
+        required : true,
+        ref : "Category",
     },
+
+    tag: {
+		type: [String],
+		required: true,
+	},
+
+    instructions: {
+		type: [String],
+	},
 
     studentsEnrolled : [
         {
@@ -55,7 +65,12 @@ exports.CourseSchema = new mongoose.Schema({
             required : true,
             ref : "users"
         }
-    ]
+    ],
+
+    status: {
+		type: String,
+		enum: ["Draft", "Published"],
+	},
 
 });
 

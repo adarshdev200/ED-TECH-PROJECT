@@ -1,7 +1,8 @@
 const Course = require("../models/Course");
-const tag = require("../models/Category");
+const category = require("../models/Category");
 const user = require("../models/user");
 const { uploadImageToCloudinary } = require("../utils/cloudinary");
+const { populate } = require("dotenv");
 
 exports.createCourse = async (req, res) => {
   try {
@@ -113,9 +114,64 @@ exports.getAllCourses = async (req,res) => {
 
     }
 
-    catch{
+    catch(error) {
 
-    }
+    return res.status(404).json({
+        success: false,
+        message : error.message,
+      })
+
+
+  }
 }
 
 
+exports.getCourseDetails = async (req,res) =>{
+  try{
+
+    const {courseID} = req.body;
+
+    const findCourseByID = await Course.findById(courseID).populate({
+      path : "instructor",
+      populate : {
+        path : "additionaldetails",
+      }
+
+    })
+    .populate("ratingAndReviews")
+    .populate({
+      path : "coursecontent",
+      populate :{
+        path: "Subsection",
+      }
+    }).exec();
+
+
+    if (!findCourseByID) {
+      return res.status(403).json({
+        success : false,
+        message : "Could not fetch course details."
+      })
+
+    }
+
+    return res.status(200).json({
+      success : true,
+      message : "Course details fetched",
+      data : findCourseByID,
+    })
+
+
+
+
+  }
+  catch(error) {
+
+    return res.status(404).json({
+        success: false,
+        message : error.message,
+      })
+
+
+  }
+}

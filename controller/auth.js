@@ -5,6 +5,7 @@ const { raw } = require("express");
 const OTP = require("../models/OTP");
 const profile = require("../models/profile");
 const mailSender = require("../utils/nodemailer");
+const bcrypt = require("bcrypt");
 
 //Send OTP MODEL
 

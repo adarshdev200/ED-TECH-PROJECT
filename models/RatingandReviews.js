@@ -18,6 +18,12 @@ exports.ratingandreviewSchema = new mongoose.Schema({
         required : true,
 
     },
+    course: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+		ref: "course",
+		index: true,
+	},
 
 });
 

@@ -36,6 +36,16 @@ exports.userSchema = new mongoose.Schema({
         enum : ["Instructor" , "Student" , "Admin"],
     },
 
+    active: {
+			type: Boolean,
+			default: true,
+		},
+
+    approved: {
+			type: Boolean,
+			default: true,
+		},
+
     image : {
 
         type : String,
@@ -78,6 +88,7 @@ exports.userSchema = new mongoose.Schema({
     },
 
 
-});
+},
+{ timestamps: true });
 
 module.exports = mongoose.model("user" , userSchema);

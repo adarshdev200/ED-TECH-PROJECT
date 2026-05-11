@@ -9,6 +9,7 @@ exports.sectionScehma = new mongoose.Schema({
     Subsection : [
         {
             type : mongoose.Schema.Types.ObjectId,
+            required : true,
             ref : "subsection",
         }
     ],
