@@ -43,9 +43,9 @@ exports.capturePayment = async (req, res) => {
       message: "Site broken , Bad gateway",
     });
   }
-};
 
-        //order create
+
+    //order create
     const amount = courseExist.price;
     const currency = "INR";
 
@@ -81,6 +81,7 @@ exports.capturePayment = async (req, res) => {
             message:"Could not initiate order",
         });
     }
+}
 
 
 
