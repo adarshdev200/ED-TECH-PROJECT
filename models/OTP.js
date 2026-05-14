@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const mailSender = require("../utils/nodemailer");
 
-exports.OTPSchema = new mongoose.Schema({
+const OTPSchema = new mongoose.Schema({
 
     email:{
         type:String,
@@ -34,9 +35,9 @@ async function sendVerificationEmail(email, otp) {
     }
 }
 
-OTPSchema.pre("save", async function(next) {
+OTPSchema.pre("save", async function() {
     await sendVerificationEmail(this.email, this.otp);  
-    next();
+    
 })
 
 // It's a listener that says: "Hey Mongoose, whenever someone tries to save an OTP, run this code FIRST (before the actual save)."

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-exports.userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
 
     firstName :{
         type : String,

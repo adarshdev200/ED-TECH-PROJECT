@@ -1,11 +1,11 @@
 const user = require("../models/user");
-const otp = require("../models/OTP");
-const otpgen = require("otp-generator");
+const otpGenerator = require("otp-generator");
 const { raw } = require("express");
 const OTP = require("../models/OTP");
 const profile = require("../models/profile");
 const mailSender = require("../utils/nodemailer");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken")
 
 //Send OTP MODEL
 
@@ -13,7 +13,7 @@ exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body; // jo bhi schema hai vo db banna ke liye use hota hai.
 
-    if (!user_email) {
+    if (!email) {
       res.status(400).json({
         success: false,
         message: "Email is required",
@@ -39,24 +39,22 @@ exports.sendOTP = async (req, res) => {
       lowerCaseAlphabets: false,
     });
 
-    //unique otp
-
-    let result = await OTP.findOne({ otp });
+    // check unique otp
+    let result = await OTP.findOne({ otp: generated_otp });
 
     while (result) {
-      otp = otpGenerator.generate(6, {
+      generated_otp = otpGenerator.generate(6, {
         upperCaseAlphabets: false,
         lowerCaseAlphabets: false,
         specialChars: false,
       });
 
-      result = await OTP.findOne({ otp: otp });
+      result = await OTP.findOne({ otp: generated_otp });
     }
-
     // Step 4: At this point, otp is guaranteed unique
-    console.log("Unique OTP:", otp);
+    console.log("Unique OTP:", generated_otp);
 
-    const otp_payload = { email, otp };
+    const otp_payload = { email, otp : generated_otp };
 
     const otp_body = await OTP.create(otp_payload);
     console.log(otp_body);
@@ -123,7 +121,7 @@ exports.signUp = async (req, res) => {
     const check_user = await user.findOne({ email }); // user is the model jo ki db se baat krr rha hai so we are querying the db to check
 
     if (check_user) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "User already exists.",
       });
@@ -133,13 +131,13 @@ exports.signUp = async (req, res) => {
 
     const recentOtp = await OTP.findOne({ email }).sort({ createdAt: -1 });
 
-    if (recentOtp.length === 0) {
-      res.status(400).json({
+    if (!recentOtp) {
+      return res.status(400).json({
         success: false,
         message: "OTP NOT FOUND.",
       });
-    } else if (otp !== recentOtp[0].otp) {
-      res.status(400).json({
+    } else if (otp !== recentOtp.otp) {
+      return res.status(400).json({
         success: false,
         message: "OTP does not match.",
       });
@@ -168,7 +166,7 @@ exports.signUp = async (req, res) => {
       otp,
       additionaldetails: profileDetails._id,
       image:
-        "https://api.dicebear.com/9.x/initials/svg?seed=${firstName}%20${lastName}",
+        `https://api.dicebear.com/9.x/initials/svg?seed=${firstName}%20${lastName}`,
     });
 
     return res.status(200).json({
@@ -201,7 +199,9 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user_exist = await user.findOne({ email }).populate("additionaldetails");
+    const user_exist = await user
+      .findOne({ email })
+      .populate("additionaldetails");
 
     if (!user_exist) {
       res.status(403).json({
@@ -214,14 +214,14 @@ exports.login = async (req, res) => {
       const payload = {
         email: user_exist.email,
         id: user_exist._id,
-        role : user_exist.acctype,
+        role: user_exist.acctype,
       };
 
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: "2h",
       });
 
-      user_exist = user_exist.toObject();
+      // user_exist = user_exist.toObject();
       user_exist.token = token;
       user_exist.password = undefined;
 
@@ -294,7 +294,7 @@ exports.changePassword = async (req, res) => {
     userFind.password = hashedPassword;
     await userFind.save();
 
-      // 📧 Send confirmation email
+    // 📧 Send confirmation email
     try {
       await mailSender(
         userFind.email,
@@ -303,10 +303,9 @@ exports.changePassword = async (req, res) => {
          <p>Your password has been changed successfully.</p>
          <p>If you did not perform this action, please contact support immediately.</p>
          <br/>
-         <p>— Team StudyNotion</p>`
+         <p>— Team StudyNotion</p>`,
       );
-    } 
-    catch (emailError) {
+    } catch (emailError) {
       console.log("Email send failed:", emailError);
       // Don't fail the whole request just because email failed
     }

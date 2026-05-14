@@ -82,7 +82,7 @@ exports.deleteSubsection = async (req, res) => {
   }
 };
 
-exports.updateSubSection = async (req, res) => {
+exports.updateSubsection = async (req, res) => {
   try {
     const { sectionId, title, description } = req.body;
     const subSection = await subsection.findById(sectionId);

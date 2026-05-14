@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-exports.sectionScehma = new mongoose.Schema({
+const sectionScehma = new mongoose.Schema({
 
     sectionName : {
         type : String,
