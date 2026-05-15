@@ -24,7 +24,7 @@ exports.createCategory = async (req,res) => {
         console.log(CategorysDetails);
         return res.status(200).json({
             success : true,
-            message : "Tag created succesfully.. "
+            message : "Category created succesfully.. "
         })
 
 
@@ -42,9 +42,9 @@ exports.createCategory = async (req,res) => {
 
 exports.showAllCategories = async (req, res) => {
 	try {
-		const allCategorys = await Category.find(
-			{},
-			{ name: true, description: true }
+		const allCategorys = await Category.find({}
+			// {},
+			// { catName: true, catDescription: true }
 		);
 		res.status(200).json({
 			success: true,

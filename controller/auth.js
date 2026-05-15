@@ -27,7 +27,7 @@ exports.sendOTP = async (req, res) => {
     const check_user = await user.findOne({ email }); // user is the model jo ki db se baat krr rha hai so we are querying the db to check
 
     if (check_user) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "User already exists.",
       });

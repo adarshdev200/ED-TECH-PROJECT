@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const categorySchema = new mongoose.Schema({
 
-    tagName : {
+    catName : {
         type : String,
     },
 
-    tagDescription : {
+    catDescription : {
         type : String,
     },
 

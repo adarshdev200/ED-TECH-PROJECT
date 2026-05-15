@@ -59,9 +59,7 @@ exports.resetPasswordToken = async (req, res) => {
   }
 };
 
-
 //
-
 exports.resetPassword = async (req, res) => {
   try {
     const { password, confirmPassword, token } = req.body;
@@ -82,8 +80,8 @@ exports.resetPassword = async (req, res) => {
     }
 
     // 2. Find user by token
-    const user = await user.findOne({ token });
-    if (!user) {
+    const User = await user.findOne({ token });
+    if (!User) {
       return res.status(400).json({
         success: false,
         message: "Invalid token",
@@ -91,7 +89,7 @@ exports.resetPassword = async (req, res) => {
     }
 
     // 3. Check token hasn't expired
-    if (user.resetPasswordExpires < Date.now()) {
+    if (User.resetPasswordExpires < Date.now()) {
       return res.status(400).json({
         success: false,
         message: "Token has expired. Please request a new reset link.",
@@ -102,10 +100,10 @@ exports.resetPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 5. Update password and clear token (so link can't be reused)
-    user.password = hashedPassword;
-    user.token = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
+    User.password = hashedPassword;
+    User.token = undefined;
+    User.resetPasswordExpires = undefined;
+    await User.save();
 
     return res.status(200).json({
       success: true,

@@ -1,5 +1,6 @@
 const profile = require("../models/profile");
 const user = require("../models/user");
+const {uploadImageToCloudinary} = require("../utils/imageUploader");
 
 
 exports.updateProfile = async (req,res) => {
@@ -65,8 +66,8 @@ exports.deleteProfile = async (req,res) => {
 
         const getuser = await user.findById(userid);
         const getDetailsId = getuser.additionaldetails;
-        await profile.findByIdAndDelete({_id : getDetailsId});
-        await user.findByIdAndDelete({_id : userid})
+        await profile.findByIdAndDelete(getDetailsId);
+        await user.findByIdAndDelete( userid)
        
         return res.status(200).json({
             success : true,
@@ -74,6 +75,7 @@ exports.deleteProfile = async (req,res) => {
         })
     }
     catch (error) {
+      console.log(error)
     return res.status(500).json({
       success: false,
       message: "Unable to update section",
@@ -87,7 +89,7 @@ exports.getAllUserDetails = async (req, res) => {
 	try {
 		const id = req.currentUser.id;
 		const userDetails = await user.findById(id)
-			.populate("additionalDetails")
+			.populate("additionaldetails")
 			.exec();
 		console.log(userDetails);
 		res.status(200).json({

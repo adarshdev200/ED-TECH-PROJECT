@@ -6,7 +6,7 @@ exports.createSubsection = async (req, res) => {
   try {
     const { title, description, timeDuration, sectionID } = req.body;
 
-    const videofile = req.file.videofile;
+    const videofile = req.files.videofile;
 
     if (!title || !description || !timeDuration || !sectionID) {
       return res.status(403).json({
@@ -28,9 +28,9 @@ exports.createSubsection = async (req, res) => {
     });
 
     const updatedSection = await section.findByIdAndUpdate(
-      { _id: sectionID },
+      sectionID ,
       { $push: { Subsection: subsec._id } },
-      { new: true },
+      { returnDocument: 'after' },
     );
 
     return res.status(200).json({
@@ -39,6 +39,7 @@ exports.createSubsection = async (req, res) => {
       updatedSection,
     });
   } catch (err) {
+    console.log(err)
     return res.status(500).json({
       success: false,
       message: "Internal server error",
